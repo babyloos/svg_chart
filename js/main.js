@@ -8,6 +8,43 @@ $(function() {
     drawChart(cameraX, candleCount);
 });
 
+// グローバル変数
+var chartData = [
+        ['5/17', 4500, 11000, 4500, 3500],
+        ['5/18', 4500, 4500, 1100, 2500],
+        ['5/19', 2500, 8000, 1500, 1500],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/21', 1500, 10000, 1200, 2400],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100, 2500],
+        ['5/20', 1500, 2000, 1100, 1232],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/20', 1500, 2000, 1100,1000],
+        ['5/22', 27000, 30000, 10000, 15000],
+    ];
+
 // 現在表示しているローソクの最大値、最小値を返す。
 function getHighLow(chartData, cameraX, candleWidth, candleClearance, candleCount) {
     // 現在表示しているローソクを調べる
@@ -47,6 +84,7 @@ function getHighLow(chartData, cameraX, candleWidth, candleClearance, candleCoun
 }
 
 // マウス移動イベント
+// マウスがグラフから出たときにマウスレーダーを消すためのやつ
 $('#candle-chart-svg').hover(
         function() {
         },
@@ -54,16 +92,17 @@ $('#candle-chart-svg').hover(
             $('#candle-chart-svg .mouseLineX, #candle-chart-svg .mouseLineY').remove();
         }
     );
+
 $('#candle-chart-svg').mousemove(function(e) {
-    var mouseX = e.offsetX;
-    var mouseY = e.offsetY;
+    mouseX = e.offsetX;
+    mouseY = e.offsetY;
     drawMouseLine(mouseX, mouseY);
 });
 
 // マウスレーダー表示
 function drawMouseLine(mouseX, mouseY) {
-    console.log(mouseX);
-    console.log(mouseY);
+    // console.log(mouseX);
+    // console.log(mouseY);
     var lineX = document.createElementNS("http://www.w3.org/2000/svg", "line");
     var lineY = document.createElementNS("http://www.w3.org/2000/svg", "line");
     lineX.setAttribute('x1', 0);
@@ -82,6 +121,30 @@ function drawMouseLine(mouseX, mouseY) {
     $('#candle-chart-svg').append(lineY);
     $('.mouseLineX').attr({'stroke': 'gray'});
     $('.mouseLineY').attr({'stroke': 'gray'});
+
+    $('#candle-chart-svg .mouseValText').text("");
+
+    // マウスの現在価格表示
+    var nowPrice = drawMousePrice();
+    var mouseValText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    mouseValText.setAttribute('dy', ".32em");
+    mouseValText.setAttribute('x', areaWidth - 50);
+    mouseValText.setAttribute('y', mouseY);
+    mouseValText.setAttribute('class', 'mouseValText');
+    mouseValText.textContent = Math.round(nowPrice);
+    $('#candle-chart-svg').append(mouseValText);
+}
+
+// ポイントしているy座標の価格表示
+function drawMousePrice() {
+    var highLow = getHighLow(chartData, cameraX, candleWidth, candleClearance, candleCount);
+    // ポイントしているｙ座標の割合
+    var tmpMax = highLow.max - highLow.min;
+    // マウス座標が全体の何％の位置にあるか
+    var mouseYper = (1 - mouseY / areaHeight);
+    var mousePrice = tmpMax * mouseYper + highLow.min;
+    // console.log(mousePrice);
+    return mousePrice;
 }
 
 var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
@@ -184,9 +247,9 @@ function drawChart(cameraX, candleCount) {
     // var candleCount = 30;
     var candleCount = candleCount;
     // キャンドル同士の隙間
-    var candleClearance = 1;
+    candleClearance = 1;
     // キャンドルの幅
-    var candleWidth = areaWidth / candleCount - candleClearance;
+    candleWidth = areaWidth / candleCount - candleClearance;
     // カメラ座標
     var cameraX = cameraX;
     console.log(candleCount);
