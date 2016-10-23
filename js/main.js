@@ -306,19 +306,35 @@ function drawChart(cameraX, candleCount) {
 
     // 価格帯
 
-    // 最高値
-    var hightValText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    hightValText.setAttribute('dy', ".32em");
-    hightValText.setAttribute('x', areaWidth - 50);
-    hightValText.setAttribute('y', 10);
-    hightValText.textContent = hightVal;
-    var lowestValText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    lowestValText.setAttribute('dy', ".32em");
-    lowestValText.setAttribute('x', areaWidth - 50);
-    lowestValText.setAttribute('y', areaHeight - 10);
-    lowestValText.textContent = lowestVal;
-    $('#candle-chart-svg').append(hightValText);
-    $('#candle-chart-svg').append(lowestValText);
+    // 最高値 最低値
+    // var hightValText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    // hightValText.setAttribute('dy', ".32em");
+    // hightValText.setAttribute('x', areaWidth - 50);
+    // hightValText.setAttribute('y', 10);
+    // hightValText.textContent = hightVal;
+    // var lowestValText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    // lowestValText.setAttribute('dy', ".32em");
+    // lowestValText.setAttribute('x', areaWidth - 50);
+    // lowestValText.setAttribute('y', areaHeight - 10);
+    // lowestValText.textContent = lowestVal;
+    // $('#candle-chart-svg').append(hightValText);
+    // $('#candle-chart-svg').append(lowestValText);
     // debug
     // console.log(rectX);
+
+    //　価格ガイドを表示
+    for (var i = 0; i < 6; i++) {
+        var tmpMax = highLow.max - highLow.min;
+        // 表示する位置の座標
+        var y1 = areaHeight * (0.2 * (i));
+        // console.log(y1);
+        var valYper = (1 - y1 / areaHeight);
+        var valPrice = Math.round(tmpMax * valYper + highLow.min);
+        var valText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        valText.setAttribute('dy', ".32em");
+        valText.setAttribute('x', areaWidth - 50);
+        valText.setAttribute('y', y1);
+        valText.textContent = valPrice;
+        $('#candle-chart-svg').append(valText);
+    }
 }
